@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>NBA Rosters</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!-- Bootstrap core CSS -->
+    <link href="https://v4-alpha.getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://v4-alpha.getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container-fluid">
+    <table class="table table-striped">
+        <th:block th:each="team : ${teams}" th:if="${!team.players.isEmpty()}">
+            <thead>
+                <th colspan="2" th:text="${team.name}">Team</th>
+            </thead>
+            <tbody>
+            <tr th:each="player : ${team.players}">
+                <td th:text="${player.position}">First Name</td>
+                <td th:text="${player.nr}">First Name</td>
+                <td th:text="${player.firstName}">First Name</td>
+                <td th:text="${player.lastName}">Last Name</td>
+            </tr>
+            </tbody>
+        </th:block>
+    </table>
+</div>
+</body>
+</html>
