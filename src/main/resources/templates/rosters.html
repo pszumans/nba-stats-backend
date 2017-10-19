@@ -1,29 +1,21 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
-    <title>NBA Rosters</title>
+    <title>Rosters</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <!-- Bootstrap core CSS -->
     <link href="https://v4-alpha.getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="https://v4-alpha.getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet"/>
+    <!--<link href="https://v4-alpha.getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet"/>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-bootstrap/0.31.3/react-bootstrap.min.js"></script>
 </head>
+
 <body>
-<div class="container-fluid">
-    <table class="table table-striped">
-        <th:block th:each="team : ${teams}" th:if="${!team.players.isEmpty()}">
-            <thead>
-                <th colspan="2" th:text="${team.name}">Team</th>
-            </thead>
-            <tbody>
-            <tr th:each="player : ${team.players}">
-                <td th:text="${player.position}">First Name</td>
-                <td th:text="${player.nr}">First Name</td>
-                <td th:text="${player.firstName}">First Name</td>
-                <td th:text="${player.lastName}">Last Name</td>
-            </tr>
-            </tbody>
-        </th:block>
-    </table>
-</div>
+<div class="container-fluid" id="root"></div>
 </body>
+
 </html>
+
+<script type="text/babel" src="/js/rosters.js"></script>

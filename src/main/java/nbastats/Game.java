@@ -1,13 +1,12 @@
 package nbastats;
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +26,7 @@ import java.util.stream.Collectors;
 public class Game {
 
     @ManyToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
     private GameDate gameDate;
 
     @Id
@@ -47,6 +47,7 @@ public class Game {
     private TeamStats away;
 
     @Transient
+    @JsonIgnore
     private List<TeamStats> teams;
 
     public void addPlayerStats(PlayerStats playerStats) {
@@ -83,4 +84,5 @@ public class Game {
     public void generateTeams() {
         teams = Arrays.asList(home, away);
     }
+
 }

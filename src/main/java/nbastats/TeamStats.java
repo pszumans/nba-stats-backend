@@ -1,9 +1,9 @@
 package nbastats;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -19,15 +19,13 @@ public class TeamStats {
     @GeneratedValue
     private Long id;
 
-//    @Transient
-//    @Autowired
-//    private TeamRepository teamRepository;
-
 //    @OneToOne
 //    private Game game;
 
     @OneToOne
+    @JsonSerialize(using = TeamSerializer.class)
     private Team team;
+
     @JsonUnwrapped
     @OneToOne(cascade = CascadeType.ALL)
     private Stats stats;

@@ -1,5 +1,7 @@
 package nbastats;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -15,6 +17,7 @@ public class GameDate {
     @Id
     private String id;
 
+    @JsonIgnore
     private Date date;
 
     @OneToMany(mappedBy = "gameDate")
@@ -27,6 +30,7 @@ public class GameDate {
         this.date = new SimpleDateFormat("yyyyMMdd").parse(dateId);
     }
 
+    @JsonProperty("date")
     public String getDateString() {
         return new SimpleDateFormat("yyyyMMdd").format(date);
     }

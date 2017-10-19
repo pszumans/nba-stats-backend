@@ -19,7 +19,7 @@ import java.util.List;
 public class Team {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "team")
-    @JsonIgnore
+//    @JsonIgnore
     private List<Player> players;
 
     @JsonProperty("fullName")

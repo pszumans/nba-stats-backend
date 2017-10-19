@@ -1,5 +1,6 @@
 package nbastats;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Data;
@@ -16,6 +17,7 @@ public class PlayerStats {
     private Long id;
 
     @ManyToOne
+    @JsonIgnore
     private TeamStats teamStats;
 
     @OneToOne
