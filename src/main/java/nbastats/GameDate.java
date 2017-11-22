@@ -3,8 +3,11 @@ package nbastats;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,6 +15,7 @@ import java.util.List;
 
 @Data
 @Entity
+@NoArgsConstructor
 public class GameDate {
 
     @Id
@@ -23,8 +27,6 @@ public class GameDate {
     @OneToMany(mappedBy = "gameDate")
     private List<Game> games;
 
-    public GameDate() {
-    }
 
     public void setDateById(String dateId) throws ParseException {
         this.date = new SimpleDateFormat("yyyyMMdd").parse(dateId);

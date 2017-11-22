@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 
 @Data
 @Entity
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TeamStats {
 
@@ -33,14 +35,6 @@ public class TeamStats {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "teamStats")
     private List<PlayerStats> playerStats;
 
-    //    @JsonSetter("teamId")
-    public void setTeamById(Long teamId, TeamRepository teamRepository) {
-//        System.out.println(teamId);
-//        System.out.println(teamRepository.findAll());
-        team = teamRepository.findById(teamId);
-
-    }
-
     /*
     @JsonCreator
     public TeamStats(
@@ -53,12 +47,9 @@ public class TeamStats {
     }
     */
 
-    public TeamStats() {
-    }
-
-    public TeamStats(Long id, Stats stats, TeamRepository teamRepository) {
+    public TeamStats(Stats stats, Team team) {
         setStats(stats);
-        setTeamById(id, teamRepository);
+        setTeam(team);
     }
 
     public void addPlayerStats(PlayerStats playerStats) {

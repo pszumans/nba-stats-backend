@@ -1,8 +1,6 @@
 package nbastats;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,18 +12,26 @@ import java.util.List;
 @RequestMapping("/api")
 public class ApiController {
 
-    @Autowired
-    private TeamRepository teamRepository;
-    @Autowired
-    private GameDateRepository gameDateRepository;
+    private final TeamRepository teamRepository;
+    private final GameDateRepository gameDateRepository;
+
+    public ApiController(TeamRepository teamRepository, GameDateRepository gameDateRepository) {
+        this.teamRepository = teamRepository;
+        this.gameDateRepository = gameDateRepository;
+    }
 
     @GetMapping("/rosters")
-    List<Team> teams() {
-        return teamRepository.findAll();
+    ResponseEntity<List<Team>> rosters() {
+        return ResponseEntity.ok().body(teamRepository.findAll());
+    }
+
+    @GetMapping("/teams")
+    ResponseEntity<List<Team>> teams() {
+        return ResponseEntity.ok().body(teamRepository.findAll());
     }
 
     @GetMapping("/{date}")
-    GameDate games(@PathVariable String date) {
-        return gameDateRepository.findById(date);
+    ResponseEntity<GameDate> games(@PathVariable String date) {
+        return ResponseEntity.ok().body(gameDateRepository.findById(date));
     }
 }
