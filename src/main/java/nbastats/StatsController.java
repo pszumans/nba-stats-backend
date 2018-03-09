@@ -7,6 +7,7 @@ import org.springframework.hateoas.ResourceSupport;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -78,17 +79,21 @@ public class StatsController {
 
     @RequestMapping("/boxscore/{date}")
     String gameDate(@PathVariable String date, Model model) throws ParseException {
-        link = linkTo(methodOn(ApiController.class).games("20171101")).withSelfRel();//.withRel("link");
+        link = linkTo(methodOn(ApiController.class).games(date)).withSelfRel();//.withRel("link");
         GameDate gameDate = new GameDate(date);
-        gameDateService.consumeStats(model, gameDate);
+        gameDateService.consumeStats(gameDate);
         return "boxscore";
     }
 
     @RequestMapping("/mboxscore/{date}")
     String gameDateM(@PathVariable String date, Model model) throws ParseException {
         GameDate gameDate = new GameDate(date);
-        gameDateService.consumeStats(model, gameDate);
+        gameDateService.consumeStats(gameDate);
         return "mboxscore";
     }
 
+    @GetMapping("/index")
+    String index() {
+        return "index";
+    }
 }

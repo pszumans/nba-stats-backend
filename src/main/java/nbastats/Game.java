@@ -1,23 +1,12 @@
 package nbastats;
 
 import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.web.JsonPath;
 
 import javax.persistence.*;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -31,7 +20,7 @@ public class Game {
 
     @Id
     @JsonProperty("gameId")
-    private String id;
+    private String gameId;
 
     @JsonProperty("isGameActivated")
     boolean isOnline;
@@ -51,14 +40,14 @@ public class Game {
     private List<TeamStats> teams;
 
     public void addPlayerStats(PlayerStats playerStats) {
-        playerStats.generateStatsMap();
+//        playerStats.generateStatsMap();
         if (playerStats.getPlayer() != null && playerStats.getPlayer().getTeam() != null) {
-            Long id = playerStats.getPlayer().getTeam().getId();
-            if (home.getTeam().getId().equals(id)) {
+            Long id = playerStats.getPlayer().getTeam().getTeamId();
+            if (home.getTeam().getTeamId().equals(id)) {
                 playerStats.setTeamStats(home);
                 home.addPlayerStats(playerStats);
             }
-            else if (away.getTeam().getId().equals(id)) {
+            else if (away.getTeam().getTeamId().equals(id)) {
                 playerStats.setTeamStats(away);
                 away.addPlayerStats(playerStats);
             }
@@ -75,14 +64,14 @@ public class Game {
     public String toString() {
         return "Game{" +
                 ", gameDateId=" + gameDate.getId() +
-                ", id='" + id + '\'' +
+                ", playerId='" + gameId + '\'' +
                 ", home=" + home +
                 ", away=" + away +
                 '}';
     }
 
-    public void generateTeams() {
-        teams = Arrays.asList(home, away);
-    }
+//    public void generateTeams() {
+//        teams = Arrays.asList(home, away);
+//    }
 
 }

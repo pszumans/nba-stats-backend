@@ -25,12 +25,12 @@ public class Team {
 
     @Id
     @JsonProperty("teamId")
-    private Long id;
+    private Long teamId;
 
     private String urlName;
 
-    public Team(Long id) {
-        this.id = id;
+    public Team(Long teamId) {
+        this.teamId = teamId;
     }
 
     public void addPlayer(Player player) {
@@ -52,7 +52,7 @@ public class Team {
     public String toString() {
         return "Team{" +
                 "name='" + name + '\'' +
-                ", id=" + id +
+                ", teamId=" + teamId +
                 ", urlName='" + urlName + '\'' +
                 '}';
     }

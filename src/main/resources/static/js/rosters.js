@@ -8,63 +8,82 @@ class Rosters extends React.Component {
 
     componentDidMount() {
 
-    fetch("/api/rosters")
-        .then(response => response.json())
-        .then(data => {
-            this.setState({teams: data})
-        })
-     }
+        fetch("/api/rosters")
+            .then(response => response.json())
+            .then(data => {
+                this.setState({teams: data})
+            })
+    }
 
     render() {
 
-        if(this.state.teams.length === 0){
+        if (this.state.teams.length === 0) {
             return (<p>Loading...</p>);
         } else {
-            var teams = this.state.teams.map(team => <Team team={team} />);
+            let teams = this.state.teams.map(team => <Team team={team}/>);
         }
-         return (<ReactBootstrap.Table striped>{teams}</ReactBootstrap.Table>);
+        return (<ReactBootstrap.Table striped>{teams}</ReactBootstrap.Table>);
 
-        }
     }
+}
 
 class Team extends React.Component {
-  static propTypes = {
-    team: PropTypes.object
-  };
+    static propTypes = {
+        team: PropTypes.object
+    };
 
-  render() {
-    const team = this.props.team;
-    const players = team.players.map(player => <Player player={player} />);
-    return (
+    constructor() {
+        super();
+        this.state = {
+            show: false
+        };
+    }
+
+    handleClick = () => {
+        this.setState({
+            show: !this.state.show
+        });
+    };
+
+    render() {
+        const team = this.props.team;
+        const players = team.players.map(player => <Player player={player}/>);
+
+        const {show} = this.state;
+        const label = show ? "Hide" : "Show"
+        return (
             <div>
-            <thead>
+                <thead>
                 <tr key={team.teamId}>
                     <th>{team.fullName}</th>
+                    <button onClick={this.handleClick}>{label}</button>
                 </tr>
-            </thead>
-            <tbody>{players}</tbody>
+                </thead>
+                {show && (<tbody>{players}</tbody>)}
             </div>
-            );
-  }
+        );
+    }
 }
 
 class Player extends React.Component {
-  static propTypes = {
-    player: PropTypes.object
-  };
+    static propTypes = {
+        player: PropTypes.shapeOf({
+            personId: PropTypes.number.isRequired,
+        }).isRequired
+    };
 
-  render() {
-    const player = this.props.player;
-    return (<tr key={player.personId}>
-                <td>{player.pos}</td>
-                <td>{player.jersey}</td>
-                <td>{player.firstName}</td>
-                <td>{player.lastName}</td>
-            </tr>);
-  }
+    render() {
+        const player = this.props.player;
+        return (<tr key={player.personId}>
+            <td>{player.pos}</td>
+            <td>{player.jersey}</td>
+            <td>{player.firstName}</td>
+            <td>{player.lastName}</td>
+        </tr>);
+    }
 }
 
 ReactDOM.render(
-    <Rosters /> ,
+    <Rosters/>,
     document.getElementById('root')
 );

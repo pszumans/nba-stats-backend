@@ -35,43 +35,33 @@ public class TeamStats {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "teamStats")
     private List<PlayerStats> playerStats;
 
-    /*
-    @JsonCreator
-    public TeamStats(
-//            @JsonProperty("teamId") Long teamId,
-            @JsonProperty("points") int points,
-            @JsonProperty("totReb") int rebounds,
-            @JsonProperty("assists") int assists) {
-//        setTeamById(teamId);
-        stats = new Stats(points, rebounds, assists);
-    }
-    */
-
     public TeamStats(Stats stats, Team team) {
-        setStats(stats);
-        setTeam(team);
+        this.stats = stats;
+        this.team = team;
     }
 
     public void addPlayerStats(PlayerStats playerStats) {
-        if (this.playerStats == null)
+        if (this.playerStats == null) {
             this.playerStats = new ArrayList<>();
+        }
         this.playerStats.add(playerStats);
     }
 
     public void addPlayerStats(List<PlayerStats> playerStats) {
-        if (this.playerStats == null)
+        if (this.playerStats == null) {
             this.playerStats = new ArrayList<>();
+        }
         this.playerStats.addAll(
                 playerStats
                         .stream()
-                        .filter(p -> p.getPlayer().getId().equals(team.getId()))
+                        .filter(p -> p.getPlayer().getPlayerId().equals(team.getTeamId()))
                         .collect(Collectors.toList()));
     }
 
     @Override
     public String toString() {
         return "TeamStats{" +
-                "id=" + id +
+                "playerId=" + id +
                 ", team=" + team +
                 ", stats=" + stats +
                 '}';

@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface GameRepository extends JpaRepository<Game, String> {
     List<Game> findAllByGameDateId(String gameDateId);
-    Game findById(String id);
+    Game findByGameId(String id);
+    boolean existsByIdAndIsOnlineTrue(String gameId);
 }

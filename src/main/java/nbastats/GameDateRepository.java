@@ -6,4 +6,5 @@ import java.util.Date;
 
 public interface GameDateRepository extends JpaRepository<GameDate, Date> {
     GameDate findById(String id);
+    boolean existsById(String date);
 }

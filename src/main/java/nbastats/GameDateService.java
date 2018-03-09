@@ -3,17 +3,19 @@ package nbastats;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.IntStream;
 
+@Slf4j
 @Service
 public class GameDateService {
 
@@ -26,6 +28,9 @@ public class GameDateService {
     private final TeamRepository teamRepository;
     private final PlayerRepository playerRepository;
 
+    @Autowired
+    private  GameDateRepository gameDateRepository;
+
     public GameDateService(RestTemplate restTemplate, ObjectMapper mapper,
                            GameRepository gameRepository, TeamRepository teamRepository, PlayerRepository playerRepository) {
         this.restTemplate = restTemplate;
@@ -35,56 +40,68 @@ public class GameDateService {
         this.playerRepository = playerRepository;
     }
 
-    public void consumeStats(Model model, GameDate gameDate) {
-        String data = NBA_DATA + gameDate.getId() + "/";
-        System.out.println(data + "scoreboard.json");
-        JsonNode gameNode = restTemplate.getForObject(data + "scoreboard.json", JsonNode.class).path("games");
-        List<Game> games = mapper.convertValue(gameNode, new TypeReference<List<Game>>() {
-        });
-        consumeGamesStats(data, games, gameDate);
+    public void consumeStats(GameDate gameDate) {
+        String dataUrl = NBA_DATA + gameDate.getId() + "/";
+        String scoreBoardUrl = dataUrl + "scoreboard.json";
+        log.info(scoreBoardUrl);
+        JsonNode gameNode = restTemplate.getForObject(dataUrl + "scoreboard.json", JsonNode.class).path("games");
+        List<Game> games = mapper.convertValue(gameNode, new TypeReference<List<Game>>() {});
+        consumeGamesStats(dataUrl, games, gameDate);
         List<Game> gameList = gameRepository.findAllByGameDateId(gameDate.getId());
         gameDate.setGames(gameList);
         gameList.forEach(g -> g.setGameDate(gameDate));
-        model.addAttribute("games", gameDate.getGames());
-        model.addAttribute("keys", Stats.KEYS);
+        System.out.println(gameDateRepository.findAll());
     }
 
     private void consumeGamesStats(String data, List<Game> games, GameDate gameDate) {
-        Iterator<Integer> it = IntStream.range(0, games.size()).iterator();
-        games.forEach(game -> {
-            game.setPeriod(restTemplate.getForObject(
-                    data + "scoreboard.json", JsonNode.class).path("games").path(it.next()).path("period").get("current").asInt());
-            System.out.println(data + game.getId() + "_boxscore.json");
-            JsonNode jsonStats = restTemplate.getForObject(data + game.getId() + "_boxscore.json", JsonNode.class);
-            Arrays.asList("vTeam", "hTeam").forEach(team -> {
-                        setTeamStats(game, jsonStats, team);
-                    }
-            );
-            game.generateTeams();
-            System.out.println("TEAMS = " + game.getTeams());
-            List<PlayerStats> playerStats = mapper.convertValue(jsonStats.at("/stats/activePlayers"), new TypeReference<List<PlayerStats>>() {
-            });
-            if (playerStats != null)
-                IntStream.range(0, playerStats.size()).forEach(i -> {
-                    Long id = jsonStats.at("/stats/activePlayers").path(i).get("personId").asLong();
-                    Player player = playerRepository.findById(id);
-                    playerStats.get(i).setPlayer(player);
-                    game.addPlayerStats(playerStats.get(i));
-                });
-            game.setGameDate(gameDate);
-            gameRepository.save(game);
+        for (int i = 0; i < games.size(); i++) {
+            Game game = games.get(i);
+            if (!checkGame(game)) {
+                consumeGame(data, gameDate, i, game);
+            }
+        }
+    }
+
+    private void consumeGame(String data, GameDate gameDate, int gameIt, Game game) {
+        game.setPeriod(restTemplate.getForObject(
+                data + "scoreboard.json", JsonNode.class).path("games").path(gameIt).path("period").get("current").asInt());
+        String boxscoreUrl = data + game.getGameId() + "_boxscore.json";
+        log.info(boxscoreUrl);
+        JsonNode jsonStats = restTemplate.getForObject(data + game.getGameId() + "_boxscore.json", JsonNode.class);
+        Arrays.asList("vTeam", "hTeam").forEach(team -> setTeamStats(game, jsonStats, team));
+//        game.generateTeams();
+        List<PlayerStats> playerStats = mapper.convertValue(jsonStats.at("/stats/activePlayers"), new TypeReference<List<PlayerStats>>() {
         });
+        if (playerStats != null)
+            IntStream.range(0, playerStats.size()).forEach(i -> {
+                PlayerStats playerStat = playerStats.get(i);
+                consumePlayer(game, jsonStats, i, playerStat);
+            });
+        game.setGameDate(gameDate);
+        gameRepository.save(game);
+    }
+
+    private void consumePlayer(Game game, JsonNode jsonStats, int playerStatsIt, PlayerStats playerStats) {
+        Long id = jsonStats.at("/stats/activePlayers").path(playerStatsIt).get("personId").asLong();
+        Player player = playerRepository.findByPlayerId(id);
+        playerStats.setPlayer(player);
+        game.addPlayerStats(playerStats);
+    }
+
+    private boolean checkGame(Game game) {
+        return !gameRepository.existsById(game.getGameId()) || gameRepository.existsByIdAndIsOnlineTrue(game.getGameId());
     }
 
     private void setTeamStats(Game game, JsonNode jsonStats, String teamName) {
         Long teamId = jsonStats.path("basicGameData").path(teamName).path("teamId").asLong();
         Stats stats = mapper.convertValue(jsonStats.path("stats").path(teamName).path("totals"), Stats.class);
-        Team team = teamRepository.findById(teamId);
+        Team team = teamRepository.findByTeamId(teamId);
         TeamStats teamStats = new TeamStats(stats, team);
-        if (teamName.equals("vTeam"))
+        if (teamName.equals("vTeam")) {
             game.setAway(teamStats);
-        else if (teamName.equals("hTeam"))
+        } else if (teamName.equals("hTeam")) {
             game.setHome(teamStats);
+        }
     }
 
     public List<Team> getAllTeams() {
@@ -93,5 +110,12 @@ public class GameDateService {
 
     public List<Game> getGameDate(String date) {
         return gameRepository.findAllByGameDateId(date);
+    }
+
+    public GameDate consumeStats(String date) throws ParseException {
+        if (!gameDateRepository.existsById(date)) {
+            consumeStats(new GameDate(date));
+        }
+        return gameDateRepository.findById(date);
     }
 }

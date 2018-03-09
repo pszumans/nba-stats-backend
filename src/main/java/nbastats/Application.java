@@ -20,7 +20,7 @@ public class Application {
     }
 
     @Bean
-    CommandLineRunner init(RosterService rosterService) {
+    public CommandLineRunner init(RosterService rosterService) {
         return (args) -> {
             rosterService.setRosters();
         };
