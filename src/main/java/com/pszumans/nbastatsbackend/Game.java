@@ -40,7 +40,6 @@ public class Game {
     private List<TeamStats> teams;
 
     public void addPlayerStats(PlayerStats playerStats) {
-//        playerStats.generateStatsMap();
         if (playerStats.getPlayer() != null && playerStats.getPlayer().getTeam() != null) {
             Long id = playerStats.getPlayer().getTeam().getTeamId();
             if (home.getTeam().getTeamId().equals(id)) {
@@ -54,24 +53,14 @@ public class Game {
         }
     }
 
-    public void addPlayerStats(List<PlayerStats> playerStats) {
-        playerStats.forEach(p -> {
-            addPlayerStats(p);
-        });
-    }
-
     @Override
     public String toString() {
         return "Game{" +
-                ", gameDateId=" + gameDate.getId() +
-                ", playerId='" + gameId + '\'' +
+                "gameDateId=" + gameDate.getId() +
+                ", gameId='" + gameId + '\'' +
                 ", home=" + home +
                 ", away=" + away +
                 '}';
     }
-
-//    public void generateTeams() {
-//        teams = Arrays.asList(home, away);
-//    }
 
 }

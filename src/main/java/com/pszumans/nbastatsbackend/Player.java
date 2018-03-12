@@ -15,9 +15,6 @@ import javax.persistence.ManyToOne;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Player {
 
-    private String firstName;
-    private String lastName;
-
     @JsonProperty("jersey")
     private int nr;
 
@@ -27,6 +24,9 @@ public class Player {
     @Id
     @JsonProperty("personId")
     private Long playerId;
+
+    private String firstName;
+    private String lastName;
 
     @ManyToOne
     @JsonIgnore

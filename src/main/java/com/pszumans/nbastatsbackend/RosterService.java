@@ -51,11 +51,10 @@ public class RosterService {
                 .at("/league/standard");
         List<Team> teams = new ArrayList<>();
         for (JsonNode teamNode : teamsNode) {
-            if (teamNode.get("isNBAFranchise").asBoolean() && teamRepository.existsById(teamNode.get("teamId").asLong())) {
+            if (teamNode.get("isNBAFranchise").asBoolean() && !teamRepository.existsById(teamNode.get("teamId").asLong())) {
                 teams.add(mapper.convertValue(teamNode, Team.class));
             }
         }
-//        mapper.convertValue(teamsNode, new TypeReference<List<Team>>(){});
         teamRepository.saveAll(teams);
     }
 }

@@ -11,7 +11,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.text.ParseException;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -40,7 +39,7 @@ public class GameDateService {
         this.playerRepository = playerRepository;
     }
 
-    public void consumeStats(GameDate gameDate) {
+    private void consumeStats(GameDate gameDate) {
         String dataUrl = NBA_DATA + gameDate.getId() + "/";
         String scoreBoardUrl = dataUrl + "scoreboard.json";
         log.info(scoreBoardUrl);
@@ -50,13 +49,12 @@ public class GameDateService {
         List<Game> gameList = gameRepository.findAllByGameDateId(gameDate.getId());
         gameDate.setGames(gameList);
         gameList.forEach(g -> g.setGameDate(gameDate));
-        System.out.println(gameDateRepository.findAll());
     }
 
     private void consumeGamesStats(String data, List<Game> games, GameDate gameDate) {
         for (int i = 0; i < games.size(); i++) {
             Game game = games.get(i);
-            if (!checkGame(game)) {
+            if (isGameUpdateNeeded(game)) {
                 consumeGame(data, gameDate, i, game);
             }
         }
@@ -69,7 +67,6 @@ public class GameDateService {
         log.info(boxscoreUrl);
         JsonNode jsonStats = restTemplate.getForObject(data + game.getGameId() + "_boxscore.json", JsonNode.class);
         Arrays.asList("vTeam", "hTeam").forEach(team -> setTeamStats(game, jsonStats, team));
-//        game.generateTeams();
         List<PlayerStats> playerStats = mapper.convertValue(jsonStats.at("/stats/activePlayers"), new TypeReference<List<PlayerStats>>() {
         });
         if (playerStats != null)
@@ -88,7 +85,7 @@ public class GameDateService {
         game.addPlayerStats(playerStats);
     }
 
-    private boolean checkGame(Game game) {
+    private boolean isGameUpdateNeeded(Game game) {
         return !gameRepository.existsById(game.getGameId()) || gameRepository.existsByIdAndIsOnlineTrue(game.getGameId());
     }
 
@@ -114,7 +111,7 @@ public class GameDateService {
 
     public GameDate consumeStats(String date) throws ParseException {
         if (!gameDateRepository.existsById(date)) {
-            consumeStats(new GameDate(date));
+            consumeStats(gameDateRepository.save(new GameDate(date)));
         }
         return gameDateRepository.findById(date);
     }

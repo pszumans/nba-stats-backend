@@ -24,6 +24,7 @@ public class PlayerStats {
 
     @OneToOne
     private Player player;
+
     @JsonUnwrapped
     @OneToOne(cascade = CascadeType.ALL)
     private Stats stats;

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/NBAStats.iml" filepath="$PROJECT_DIR$/NBAStats.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nba-stats-backend.iml" filepath="$PROJECT_DIR$/nba-stats-backend.iml" />
     </modules>
   </component>
 </project>

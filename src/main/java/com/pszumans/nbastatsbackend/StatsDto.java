@@ -28,6 +28,7 @@ public class StatsDto {
         private double fgp;
 
         @JsonProperty("FG")
+        private String fg;
         private String toFG() {
             return fgm + "/" + fga;
         }
@@ -37,6 +38,7 @@ public class StatsDto {
         private double tpp;
 
         @JsonProperty("3PT")
+        private String tpt;
         private String to3PT() {
             return tpm + "/" + tpa;
         }
@@ -46,6 +48,7 @@ public class StatsDto {
         private double ftp;
 
         @JsonProperty("FT")
+        private String ft;
         private String toFT() {
             return ftm + "/" + fta;
         }
@@ -83,5 +86,13 @@ public class StatsDto {
         this.turnovers = stats.getTurnovers();
         this.fouls = stats.getFouls();
         this.plusMinus = stats.getPlusMinus();
+
+        this.fg = toFG();
+        this.ft = toFT();
+        this.tpt = to3PT();
+    }
+
+    public static StatsDto convertToDto(Stats stats) {
+        return stats == null ? null : new StatsDto(stats);
     }
 }

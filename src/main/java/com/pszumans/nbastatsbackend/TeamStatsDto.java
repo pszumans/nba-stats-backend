@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Setter;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,8 +20,8 @@ public class TeamStatsDto {
 //    @JsonIgnore
     private Team team;
 
-    @JsonUnwrapped
-    @JsonIgnore
+//    @JsonUnwrapped
+    @JsonProperty("stats")
     private StatsDto statsDto;
 
     @JsonProperty("players")
@@ -27,11 +29,16 @@ public class TeamStatsDto {
 
     public TeamStatsDto(TeamStats teamStats) {
         this.team = teamStats.getTeam();
-        this.statsDto = new StatsDto(teamStats.getStats());
-        playerStatsDto = teamStats
+        this.statsDto = StatsDto.convertToDto(teamStats.getStats());
+        playerStatsDto = convertPlayerStatsToDto(teamStats);
+    }
+
+    private List<PlayerStatsDto> convertPlayerStatsToDto(TeamStats teamStats) {
+        return teamStats.getPlayerStats() == null ? Collections.emptyList()
+                : teamStats
                 .getPlayerStats()
                 .stream()
-                .map(ps -> new PlayerStatsDto(ps))
+                .map(ps -> PlayerStatsDto.convertToDto(ps))
                 .collect(Collectors.toList());
     }
 }

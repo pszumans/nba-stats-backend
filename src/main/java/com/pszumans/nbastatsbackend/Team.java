@@ -1,8 +1,8 @@
 package nbastats;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -13,12 +13,8 @@ import java.util.List;
 
 @Getter
 @Entity
-@JsonIgnoreProperties(ignoreUnknown = true)
+@NoArgsConstructor
 public class Team {
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "team")
-//    @JsonIgnore
-    private List<Player> players;
 
     @JsonProperty("fullName")
     private String name;
@@ -29,23 +25,11 @@ public class Team {
 
     private String urlName;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "team")
+    private List<Player> players;
+
     public Team(Long teamId) {
         this.teamId = teamId;
-    }
-
-    public void addPlayer(Player player) {
-        if (players == null)
-            players = new ArrayList<>();
-        players.add(player);
-    }
-
-    public void addPlayers(List<Player> players) {
-        if (players == null)
-            players = new ArrayList<>();
-        players.addAll(players);
-    }
-
-    public Team() {
     }
 
     @Override

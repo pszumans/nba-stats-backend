@@ -20,6 +20,10 @@ public class PlayerStatsDto {
     public PlayerStatsDto(PlayerStats playerStats) {
         this.teamStats = playerStats.getTeamStats();
         this.player = playerStats.getPlayer();
-        this.statsDto = new StatsDto(playerStats.getStats());
+        this.statsDto = StatsDto.convertToDto(playerStats.getStats());
+    }
+
+    public static PlayerStatsDto convertToDto(PlayerStats playerStats) {
+        return playerStats == null ? null : new PlayerStatsDto(playerStats);
     }
 }

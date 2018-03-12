@@ -2,16 +2,15 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="NBAStats" />
+        <module name="nba-stats-backend" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="NBAStats" target="1.9" />
+      <module name="nba-stats-backend" target="9" />
     </bytecodeTargetLevel>
   </component>
 </project>
