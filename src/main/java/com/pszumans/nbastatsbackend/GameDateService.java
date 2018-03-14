@@ -1,4 +1,4 @@
-package nbastats;
+package com.pszumans.nbastatsbackend;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -41,14 +41,15 @@ public class GameDateService {
 
     private void consumeStats(GameDate gameDate) {
         String dataUrl = NBA_DATA + gameDate.getId() + "/";
+        List<Game> games = getGames(dataUrl);
+        consumeGamesStats(dataUrl, games, gameDate);
+    }
+
+    private List<Game> getGames(String dataUrl) {
         String scoreBoardUrl = dataUrl + "scoreboard.json";
         log.info(scoreBoardUrl);
         JsonNode gameNode = restTemplate.getForObject(dataUrl + "scoreboard.json", JsonNode.class).path("games");
-        List<Game> games = mapper.convertValue(gameNode, new TypeReference<List<Game>>() {});
-        consumeGamesStats(dataUrl, games, gameDate);
-        List<Game> gameList = gameRepository.findAllByGameDateId(gameDate.getId());
-        gameDate.setGames(gameList);
-        gameList.forEach(g -> g.setGameDate(gameDate));
+        return mapper.convertValue(gameNode, new TypeReference<List<Game>>() {});
     }
 
     private void consumeGamesStats(String data, List<Game> games, GameDate gameDate) {
@@ -74,6 +75,7 @@ public class GameDateService {
                 PlayerStats playerStat = playerStats.get(i);
                 consumePlayer(game, jsonStats, i, playerStat);
             });
+        gameDate.addGame(game);
         game.setGameDate(gameDate);
         gameRepository.save(game);
     }
@@ -86,7 +88,7 @@ public class GameDateService {
     }
 
     private boolean isGameUpdateNeeded(Game game) {
-        return !gameRepository.existsById(game.getGameId()) || gameRepository.existsByIdAndIsOnlineTrue(game.getGameId());
+        return !gameRepository.existsById(game.getGameId()) || gameRepository.findById(game.getGameId()).get().isOnline();
     }
 
     private void setTeamStats(Game game, JsonNode jsonStats, String teamName) {
@@ -110,9 +112,13 @@ public class GameDateService {
     }
 
     public GameDate consumeStats(String date) throws ParseException {
+        GameDate gameDate;
         if (!gameDateRepository.existsById(date)) {
-            consumeStats(gameDateRepository.save(new GameDate(date)));
+            gameDate = gameDateRepository.save(new GameDate(date));
+        } else {
+            gameDate = gameDateRepository.findById(date);
         }
+        consumeStats(gameDate);
         return gameDateRepository.findById(date);
     }
 }

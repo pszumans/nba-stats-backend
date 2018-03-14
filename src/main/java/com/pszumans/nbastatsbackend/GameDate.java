@@ -1,4 +1,4 @@
-package nbastats;
+package com.pszumans.nbastatsbackend;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,8 +10,10 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Entity
@@ -45,5 +47,18 @@ public class GameDate {
     public GameDate(Date date) {
         this.date = date;
         this.id = getDateString();
+    }
+
+    public void addGame(Game game) {
+        if (games == null) {
+            games = new ArrayList<>();
+        }
+        for (int i = 0; i < games.size(); i++) {
+            if (games.get(i).getGameId().equals(game.getGameId())) {
+                games.set(i, game);
+                return;
+            }
+        }
+        games.add(game);
     }
 }

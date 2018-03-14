@@ -1,4 +1,4 @@
-package nbastats;
+package com.pszumans.nbastatsbackend;
 
 import com.fasterxml.jackson.annotation.*;
 import lombok.Getter;
@@ -56,11 +56,24 @@ public class Game {
     @Override
     public String toString() {
         return "Game{" +
-                "gameDateId=" + gameDate.getId() +
-                ", gameId='" + gameId + '\'' +
+                "gameId='" + gameId + '\'' +
+                ", isOnline=" + isOnline +
+                ", clock='" + clock + '\'' +
+                ", period=" + period +
                 ", home=" + home +
                 ", away=" + away +
+                ", teams=" + teams +
                 '}';
     }
+
+    //    @Override
+//    public String toString() {
+//        return "Game{" +
+//                "gameDateId=" + gameDate.getId() +
+//                ", gameId='" + gameId + '\'' +
+//                ", home=" + home +
+//                ", away=" + away +
+//                '}';
+//    }
 
 }

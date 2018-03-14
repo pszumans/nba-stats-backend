@@ -1,4 +1,4 @@
-package nbastats;
+package com.pszumans.nbastatsbackend;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

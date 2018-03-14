@@ -1,4 +1,4 @@
-package nbastats;
+package com.pszumans.nbastatsbackend;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

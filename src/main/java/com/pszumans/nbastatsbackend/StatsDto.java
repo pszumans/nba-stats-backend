@@ -1,4 +1,4 @@
-package nbastats;
+package com.pszumans.nbastatsbackend;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Setter;

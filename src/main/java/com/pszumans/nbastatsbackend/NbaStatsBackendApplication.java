@@ -1,4 +1,4 @@
-package com.pszumans.nbastats;
+package com.pszumans.nbastatsbackend;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
