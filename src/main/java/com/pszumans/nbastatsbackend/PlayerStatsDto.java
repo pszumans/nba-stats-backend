@@ -14,12 +14,15 @@ public class PlayerStatsDto {
     @JsonProperty("info")
     private Player player;
 
+    private boolean isOnCourt;
+
     @JsonProperty("stats")
     private StatsDto statsDto;
 
     public PlayerStatsDto(PlayerStats playerStats) {
         this.teamStats = playerStats.getTeamStats();
         this.player = playerStats.getPlayer();
+        this.isOnCourt = playerStats.isOnCourt();
         this.statsDto = StatsDto.convertToDto(playerStats.getStats());
     }
 

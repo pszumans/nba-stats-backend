@@ -32,9 +32,12 @@ public class RosterService {
 
     private void joinPlayers(List<Player> players) {
         players.forEach(p -> {
-            Team team = teamRepository.findByTeamId(p.getTeam().getTeamId());
-            p.setTeam(team);
-            playerRepository.save(p);
+            Long teamId = p.getTeam().getTeamId();
+            if (teamId != null && teamRepository.existsById(teamId)) {
+                Team team = teamRepository.findById(teamId).get();
+                p.setTeam(team);
+                playerRepository.save(p);
+            }
         });
     }
 

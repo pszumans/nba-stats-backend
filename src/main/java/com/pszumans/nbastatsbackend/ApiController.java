@@ -25,8 +25,14 @@ public class ApiController {
     }
 
     @GetMapping("/boxscore/{date}")
-    public ResponseEntity<GameDateDto> games(@PathVariable String date) throws ParseException {
-        GameDate gameDate = gameDateService.consumeStats(date);
+    public ResponseEntity<GameDateDto> games(@PathVariable String date) {
+        GameDate gameDate = gameDateService.serveGameDate(date);
         return ResponseEntity.ok().body(new GameDateDto(gameDate));
+    }
+    
+    @GetMapping("/boxscore/{date}/{gameId}")
+    public ResponseEntity<GameDto> game(@PathVariable String date, String gameId) {
+        Game game = gameDateService.serveGame(date, gameId);
+        return ResponseEntity.ok().body(new GameDto(game));
     }
 }

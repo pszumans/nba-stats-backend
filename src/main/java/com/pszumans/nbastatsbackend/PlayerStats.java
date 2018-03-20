@@ -2,6 +2,7 @@ package com.pszumans.nbastatsbackend;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,12 +26,11 @@ public class PlayerStats {
     @OneToOne
     private Player player;
 
+    @JsonProperty
+    private boolean isOnCourt;
+
     @JsonUnwrapped
     @OneToOne(cascade = CascadeType.ALL)
     private Stats stats;
-
-    public void generateStatsMap() {
-        stats.generateMap();
-    }
 
 }

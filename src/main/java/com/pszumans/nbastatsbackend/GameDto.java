@@ -10,7 +10,7 @@ public class GameDto {
     private String gameId;
     private boolean isOnline;
     private String clock;
-    private int period;
+    private int quarter;
     private TeamStatsDto home;
     private TeamStatsDto away;
 
@@ -19,7 +19,7 @@ public class GameDto {
         this.gameId = game.getGameId();
         this.isOnline = game.isOnline();
         this.clock = game.getClock();
-        this.period = game.getPeriod();
+        this.quarter = game.getQuarter();
         this.home = new TeamStatsDto(game.getHome());
         this.away = new TeamStatsDto(game.getAway());
     }

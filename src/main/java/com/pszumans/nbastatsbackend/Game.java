@@ -1,6 +1,7 @@
 package com.pszumans.nbastatsbackend;
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Game {
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JsonIgnore
     private GameDate gameDate;
 
@@ -27,8 +28,9 @@ public class Game {
 
     private String clock;
 
-    @JsonIgnore
-    private int period;
+    @JsonProperty("period")
+    @JsonDeserialize(using = QuarterDeserializer.class)
+    private int quarter;
 
     @OneToOne(cascade = CascadeType.ALL)
     private TeamStats home;
@@ -38,42 +40,5 @@ public class Game {
     @Transient
     @JsonIgnore
     private List<TeamStats> teams;
-
-    public void addPlayerStats(PlayerStats playerStats) {
-        if (playerStats.getPlayer() != null && playerStats.getPlayer().getTeam() != null) {
-            Long id = playerStats.getPlayer().getTeam().getTeamId();
-            if (home.getTeam().getTeamId().equals(id)) {
-                playerStats.setTeamStats(home);
-                home.addPlayerStats(playerStats);
-            }
-            else if (away.getTeam().getTeamId().equals(id)) {
-                playerStats.setTeamStats(away);
-                away.addPlayerStats(playerStats);
-            }
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "Game{" +
-                "gameId='" + gameId + '\'' +
-                ", isOnline=" + isOnline +
-                ", clock='" + clock + '\'' +
-                ", period=" + period +
-                ", home=" + home +
-                ", away=" + away +
-                ", teams=" + teams +
-                '}';
-    }
-
-    //    @Override
-//    public String toString() {
-//        return "Game{" +
-//                "gameDateId=" + gameDate.getId() +
-//                ", gameId='" + gameId + '\'' +
-//                ", home=" + home +
-//                ", away=" + away +
-//                '}';
-//    }
 
 }

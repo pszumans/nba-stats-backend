@@ -21,9 +21,6 @@ public class TeamStats {
     @GeneratedValue
     private Long id;
 
-//    @OneToOne
-//    private Game game;
-
     @OneToOne
     @JsonSerialize(using = TeamSerializer.class)
     private Team team;
@@ -35,35 +32,8 @@ public class TeamStats {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "teamStats")
     private List<PlayerStats> playerStats;
 
-    public TeamStats(Stats stats, Team team) {
-        this.stats = stats;
+    public TeamStats(Team team, Stats stats) {
         this.team = team;
-    }
-
-    public void addPlayerStats(PlayerStats playerStats) {
-        if (this.playerStats == null) {
-            this.playerStats = new ArrayList<>();
-        }
-        this.playerStats.add(playerStats);
-    }
-
-    public void addPlayerStats(List<PlayerStats> playerStats) {
-        if (this.playerStats == null) {
-            this.playerStats = new ArrayList<>();
-        }
-        this.playerStats.addAll(
-                playerStats
-                        .stream()
-                        .filter(p -> p.getPlayer().getPlayerId().equals(team.getTeamId()))
-                        .collect(Collectors.toList()));
-    }
-
-    @Override
-    public String toString() {
-        return "TeamStats{" +
-                "Id=" + id +
-                ", team=" + team +
-                ", stats=" + stats +
-                '}';
+        this.stats = stats;
     }
 }
