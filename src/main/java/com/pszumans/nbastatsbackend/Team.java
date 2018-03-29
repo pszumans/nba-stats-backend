@@ -25,19 +25,12 @@ public class Team {
 
     private String urlName;
 
+    private String tricode;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "team")
     private List<Player> players;
 
     public Team(Long teamId) {
         this.teamId = teamId;
-    }
-
-    @Override
-    public String toString() {
-        return "Team{" +
-                "name='" + name + '\'' +
-                ", teamId=" + teamId +
-                ", urlName='" + urlName + '\'' +
-                '}';
     }
 }

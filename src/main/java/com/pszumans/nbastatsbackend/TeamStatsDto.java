@@ -16,8 +16,6 @@ import java.util.stream.Collectors;
 public class TeamStatsDto {
 
     @JsonSerialize(using = TeamSerializer.class)
-//    @JsonUnwrapped
-//    @JsonIgnore
     private Team team;
 
 //    @JsonUnwrapped

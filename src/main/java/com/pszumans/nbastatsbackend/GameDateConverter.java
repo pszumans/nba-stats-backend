@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -87,7 +88,7 @@ public class GameDateConverter {
         Long teamId = gameNode.path("basicGameData").path(teamSide).get("teamId").asLong();
         Team team = teamRepository.findById(teamId).get();
         TeamStats teamStats = new TeamStats(team, stats);
-        teamStats.setPlayerStats(convertPlayerStats(date, gameId, teamSide));
+        teamStats.setPlayerStats(filterPlayerStatsList(convertPlayerStats(date, gameId, teamSide), teamStats));
         boxscoreNode = null;
         return teamStats;
     }
@@ -96,13 +97,24 @@ public class GameDateConverter {
         JsonNode gameNode = parseBoxscoreNode(date, gameId);
         JsonNode playersNode = gameNode.at("/stats/activePlayers");
         List<PlayerStats> playerStatsList = objectMapper.convertValue(playersNode, new TypeReference<List<PlayerStats>>() {});
-        long teamId = gameNode.path("basicGameData").path(teamSide).get("teamId").asLong();
-        return IntStream.range(0, playerStatsList.size())
-                .filter(i -> playersNode.path(i).get("teamId").asLong() == teamId)
+        return playerStatsList == null ? Collections.emptyList()
+                : IntStream.range(0, playerStatsList.size())
+                .filter(i -> playerRepository.existsById(playersNode.path(i).get("personId").asLong()))
                 .mapToObj(i -> {
                     Player player = playerRepository.findById(playersNode.path(i).get("personId").asLong()).get();
                     PlayerStats playerStats = playerStatsList.get(i);
                     playerStats.setPlayer(player);
+                    return playerStats;
+                })
+                .collect(Collectors.toList());
+    }
+
+    private List<PlayerStats> filterPlayerStatsList(List<PlayerStats> playerStatsList, TeamStats teamStats) {
+        return playerStatsList
+                .stream()
+                .filter(playerStats -> playerStats.getPlayer().getTeam().equals(teamStats.getTeam()))
+                .map(playerStats -> {
+                    playerStats.setTeamStats(teamStats);
                     return playerStats;
                 })
                 .collect(Collectors.toList());
