@@ -8,6 +8,7 @@ public class GameDto {
     @JsonIgnore
     private GameDate gameDate;
     private String gameId;
+    private String gameTime;
     private boolean isOnline;
     private String clock;
     private int quarter;
@@ -17,6 +18,7 @@ public class GameDto {
     public GameDto(Game game) {
         this.gameDate = game.getGameDate();
         this.gameId = game.getGameId();
+        this.gameTime = game.getGameTime();
         this.isOnline = game.isOnline();
         this.clock = game.getClock();
         this.quarter = game.getQuarter();

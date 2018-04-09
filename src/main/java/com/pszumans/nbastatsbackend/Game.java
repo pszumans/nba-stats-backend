@@ -23,6 +23,9 @@ public class Game {
     @JsonProperty("gameId")
     private String gameId;
 
+    @JsonProperty("startTimeEastern")
+    private String gameTime;
+
     @JsonProperty("isGameActivated")
     boolean isOnline;
 
